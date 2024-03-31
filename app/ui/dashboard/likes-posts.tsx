@@ -18,7 +18,7 @@ export default async function LikesPosts() {
         <div className="bg-white px-6">
           {latestPosts.map((post, i) => {
             return (
-              <div
+              <div key={i}
                 className={clsx(
                   'flex flex-row items-center justify-between py-4',
                   {

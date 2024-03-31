@@ -18,7 +18,7 @@ export default async function FollowingPosts() {
         <div className="bg-white px-6">
           {followingPosts.map((post, i) => {
             return (
-              <div
+              <div key={i}
                 className={clsx(
                   'flex flex-row items-center justify-between py-4',
                   {
