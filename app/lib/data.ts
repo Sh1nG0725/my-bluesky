@@ -103,12 +103,13 @@ export async function fetchFollowingPosts(page: number = 0) {
 
       // ライムライン取得
       const tl = await agent.getTimeline({ limit : 100 });
-      followingFeed = tl.data.feed;
+      followingFeed = tl.data.feed.slice();
     }
-    feed = followingFeed.splice(0, 5);
 
     const latestPosts : LatestPost[] = [];
-    for (const [key, value] of Object.entries(feed)) {
+    for (const [key, value] of Object.entries(followingFeed)) {
+      if (!(Number(key) >= page*5 && Number(key) <= (page*5 + 4))) continue;
+
       let text = "";
       let createdAt = "";
       for (const [key, val] of Object.entries(value.post.record)) {
