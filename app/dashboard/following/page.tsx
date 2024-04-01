@@ -1,5 +1,4 @@
 import FollowingPosts from "@/app/ui/dashboard/following-posts";
-import { notoSansJP } from "@/app/ui/fonts";
 import { LatestPostsSkeleton } from "@/app/ui/skeletons";
 import { Suspense } from "react";
 

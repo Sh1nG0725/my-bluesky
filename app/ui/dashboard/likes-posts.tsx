@@ -2,21 +2,22 @@ import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { notoSansJP } from '@/app/ui/fonts';
-import { fetchLatestPosts } from '@/app/lib/data';
+import { fetchLikePosts } from '@/app/lib/data';
 import Link from 'next/link';
+import { Like } from '../like';
 
 export default async function LikesPosts() { 
-  const latestPosts = await fetchLatestPosts();
+  const likePosts = await fetchLikePosts();
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <h2 className={`${notoSansJP.className} mb-4 text-xl md:text-2xl`}>
-        Latest 5 Posts
+      <strong>Likes Posts</strong>
       </h2>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         {/* NOTE: comment in this code when you get to this point in the course */}
 
         <div className="bg-white px-6">
-          {latestPosts.map((post, i) => {
+          {likePosts.map((post, i) => {
             return (
               <div key={i}
                 className={clsx(
@@ -72,15 +73,14 @@ export default async function LikesPosts() {
                       </Link>
                     </div>
                     : null}
+                    <div className="min-w-0">
+                      <Like like={post.like} uri={post.uri} cid={post.cid}/>
+                    </div>
                   </div>
                 </div>
               </div>
             );
           })}
-        </div>
-        <div className="flex items-center pb-2 pt-6">
-          <ArrowPathIcon className="h-5 w-5 text-gray-500" />
-          <h3 className="ml-2 text-sm text-gray-500 ">Updated just now</h3>
         </div>
       </div>
     </div>

@@ -1,22 +1,84 @@
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+'use client';
+
 import clsx from 'clsx';
 import Image from 'next/image';
 import { notoSansJP } from '@/app/ui/fonts';
-import { fetchLatestPosts } from '@/app/lib/data';
 import Link from 'next/link';
+import { Like } from '../like';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { LatestPost } from '@/app/lib/definitions';
 
-export default async function LatestPosts() { 
-  const latestPosts = await fetchLatestPosts();
+type Props = {
+  initialItems: LatestPost[];
+  fetchFollowingPosts: (page?: number) => Promise<LatestPost[]>;
+};
+
+const sleep = (sec: number) => new Promise(resolve =>
+  setTimeout(resolve, sec * 1000));
+
+export function Posts({initialItems, fetchFollowingPosts} : Props) {
+
+  const observerTarget = useRef(null);
+
+  const [items, setItems] = useState([initialItems]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+
+  const flatItems = items.flatMap((page) => page);
+
+  const loadMore = useCallback(
+    async (page: number) => {
+      await sleep(0.5);
+      console.log(`page:${page}`);
+      const data = await fetchFollowingPosts(page);
+      console.log(`data:${data.length}`);
+      setItems((prev) => [...prev, data]);
+
+      const count = data.length;
+      console.log(`count:${count}`);
+      setHasMore(count > 0);
+    },
+    [fetchFollowingPosts]
+  );
+  
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && hasMore) {
+            setPage((p) => p + 1);
+          }
+        });
+      },
+      { threshold: 1.0 }
+    );
+
+    let observerRefValue: null = null;
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+      observerRefValue = observerTarget.current;
+    }
+
+    return () => {
+      if (observerRefValue) observer.unobserve(observerRefValue);
+    };
+  }, [hasMore, observerTarget]);
+
+  useEffect(() => {
+    if (page > 0) loadMore(page);
+  }, [page, loadMore]);
+  
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <h2 className={`${notoSansJP.className} mb-4 text-xl md:text-2xl`}>
-        <strong>Latest 5 Posts</strong>
+        <strong>Following Posts</strong>
       </h2>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         {/* NOTE: comment in this code when you get to this point in the course */}
 
         <div className="bg-white px-6">
-          {latestPosts.map((post, i) => {
+          {flatItems.map((post, i) => {
             return (
               <div key={i}
                 className={clsx(
@@ -70,13 +132,19 @@ export default async function LatestPosts() {
                           style={{ width: '80%', height: 'auto' }}
                         />
                       </Link>
-                    </div>
+                      </div>
                     : null}
+                    <div className="min-w-0">
+                      <Like like={post.like} uri={post.uri} cid={post.cid}/>
+                    </div>
                   </div>
                 </div>
               </div>
             );
           })}
+        </div>
+        <div className="flex items-center pb-2 pt-6">
+          <div ref={observerTarget}>{hasMore && <div>Loading ...</div>}</div>
         </div>
       </div>
     </div>

@@ -24,4 +24,7 @@ export type LatestPost = {
   createdAt: string;
   embedImage: string;
   thumbImage: string;
+  like: string;
+  uri: string;
+  cid: string;
 };
