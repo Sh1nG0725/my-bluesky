@@ -2,29 +2,38 @@
 
 import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
 import { HeartIcon as HeartIconOutline} from '@heroicons/react/24/outline';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import React from 'react';
 import { likeClick } from '../lib/likeClick';
+import { LatestPost } from '../lib/definitions';
 
-interface MemoProps {
-  like: string,
-  uri: string,
-  cid: string,
-}
-
-export function Like({like, uri, cid}: {
-  like: string;
-  uri: string;
-  cid: string;
+export function Like({post, items, setItems}: {
+  post: LatestPost;
+  items: LatestPost[][];
+  setItems: Dispatch<SetStateAction<LatestPost[][]>>;
 }) {
-  const [isLike, setLike] = useState((like) ? true : false);
+  const [isLike, setLike] = useState((post.like) ? true : false);
+  
   async function handleClick() {
-    await likeClick(like, uri, cid);
+    const response = await likeClick(post.like, post.uri, post.cid);
+    const nextShapes = items.map(it => {
+      const nextShapes = it.map(pt => {
+        if (pt.uri === post.uri) {
+          if (response) {
+            pt.like = response['uri'];
+          } else {
+            pt.like = "";
+          }
+          return pt;
+        }
+      });
+    });
+    setItems(items);
     setLike(isLike => !isLike);
   }
   return (
     <>
-    {!isLike ? 
+    {!post.like ? 
       <div className='flex'>
         <div 
           onClick={handleClick}

@@ -10,13 +10,13 @@ import { LatestPost } from '@/app/lib/definitions';
 
 type Props = {
   initialItems: LatestPost[];
-  fetchFollowingPosts: (page?: number) => Promise<LatestPost[]>;
+  fetchSearchPosts: (page?: number) => Promise<LatestPost[]>;
 };
 
 const sleep = (sec: number) => new Promise(resolve =>
   setTimeout(resolve, sec * 1000));
 
-export function Posts({initialItems, fetchFollowingPosts} : Props) {
+export function Posts({initialItems, fetchSearchPosts} : Props) {
 
   const observerTarget = useRef(null);
 
@@ -29,16 +29,14 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
   const loadMore = useCallback(
     async (page: number) => {
       await sleep(0.5);
-      console.log(`page:${page}`);
-      const data = await fetchFollowingPosts(page);
-      console.log(`data:${data.length}`);
+      const data = await fetchSearchPosts(page);
       setItems((prev) => [...prev, data]);
 
       const count = data.length;
       console.log(`count:${count}`);
       setHasMore(count > 0);
     },
-    [fetchFollowingPosts]
+    [fetchSearchPosts]
   );
   
   useEffect(() => {
@@ -72,8 +70,9 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <h2 className={`${notoSansJP.className} mb-4 text-xl md:text-2xl`}>
-        <strong>Following Posts</strong>
+        <strong>Search Posts</strong>
       </h2>
+      {flatItems.length !== 0 ?
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         {/* NOTE: comment in this code when you get to this point in the course */}
 
@@ -135,7 +134,7 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
                       </div>
                     : null}
                     <div className="min-w-0">
-                      <Like like={post.like} uri={post.uri} cid={post.cid}/>
+                      <Like post={post} items={items} setItems={setItems}/>
                     </div>
                   </div>
                 </div>
@@ -147,6 +146,7 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
           <div ref={observerTarget}>{hasMore && <div>Loading ...</div>}</div>
         </div>
       </div>
+      : ""}
     </div>
   );
 }

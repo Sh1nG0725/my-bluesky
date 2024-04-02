@@ -101,9 +101,9 @@ export async function fetchFollowingPosts(page: number = 0) {
       const session = await auth();
       await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
 
-      // ライムライン取得
-      const tl = await agent.getTimeline({ limit : 100 });
-      followingFeed = tl.data.feed.slice();
+      // タイムライン取得
+      const tl = await agent.getTimeline({ limit : 50 });
+      followingFeed = tl.data.feed.concat();
     }
 
     const latestPosts : LatestPost[] = [];
@@ -143,17 +143,27 @@ export async function fetchFollowingPosts(page: number = 0) {
   }
 }
 
-export async function fetchLikePosts() {
+let likesFeed : FeedViewPost[] = [];
+export async function fetchLikePosts(page: number = 0) {
+  "use server"
+
   noStore();
   try {
-    // 認証
-    const session = await auth();
-    await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
+    let feed : FeedViewPost[] = [];
+    if (page == 0) {
+      // 認証
+      const session = await auth();
+      await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
 
-    // いいねしたポストを取得
-    const tl = await agent.getActorLikes({ actor : session?.user.id || "", limit : 10 });
-    const latestPosts = [];
-    for (const [key, value] of Object.entries(tl.data.feed)) {
+      // いいねしたポストを取得
+      const tl = await agent.getActorLikes({ actor : session?.user.id || "", limit : 50 });
+      likesFeed = tl.data.feed.concat();
+    }
+
+    const latestPosts : LatestPost[] = [];
+    for (const [key, value] of Object.entries(likesFeed)) {
+      if (!(Number(key) >= page*5 && Number(key) <= (page*5 + 4))) continue;
+      
       let text = "";
       let createdAt = "";
       for (const [key, val] of Object.entries(value.post.record)) {
@@ -178,6 +188,60 @@ export async function fetchLikePosts() {
         cid: value.post.cid,
       };
       latestPosts.push(likePost);
+    }
+
+    return latestPosts;
+  } catch (error) {
+    console.log(error);
+    throw new Error('Failed to fetch the latest posts.');
+  }
+}
+
+let searchFeed : FeedViewPost[] = [];
+export async function fetchSearchPosts(page: number = 0, query: string = "") {
+  "use server"
+
+  noStore();
+  try {
+    let feed : FeedViewPost[] = [];
+    if (page == 0) {
+      // 認証
+      const session = await auth();
+      await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
+
+      // タイムライン取得
+      const tl = await agent.getTimeline({ limit : 50 });
+      searchFeed = tl.data.feed.concat();
+    }
+
+    const latestPosts : LatestPost[] = [];
+    for (const [key, value] of Object.entries(searchFeed)) {
+      if (!(Number(key) >= page*5 && Number(key) <= (page*5 + 4))) continue;
+
+      let text = "";
+      let createdAt = "";
+      for (const [key, val] of Object.entries(value.post.record)) {
+        if (key === "text") {
+          text = val as string;
+        } else if (key === "createdAt") {
+          createdAt = val as string;
+        }
+      }
+
+      const images = value.post.embed?.images as ViewImage[];
+      const latestPost : LatestPost = {
+        image_url: value.post.author.avatar || "",
+        displayName: value.post.author.displayName || "",
+        handle: value.post.author.handle || "",
+        text: text || "",
+        createdAt: new Date(createdAt).toLocaleString(),
+        embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
+        thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
+        like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
+        uri: value.post.uri,
+        cid: value.post.cid,
+      };
+      latestPosts.push(latestPost);
     }
 
     return latestPosts;

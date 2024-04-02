@@ -5,6 +5,7 @@ import {
   PencilSquareIcon,
   HeartIcon,
   UserPlusIcon,
+  MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,6 +23,11 @@ const links = [
     name: 'Post',
     href: '/dashboard/post',
     icon: PencilSquareIcon,
+  },
+  {
+    name: 'Search',
+    href: '/dashboard/search',
+    icon: MagnifyingGlassIcon,
   },
   {
     name: 'Following',

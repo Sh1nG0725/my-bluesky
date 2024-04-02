@@ -1,5 +1,5 @@
 import { fetchFollowingPosts } from '@/app/lib/data';
-import { Posts } from './posts';
+import { Posts } from './posts-following';
 
 export default async function FollowingPosts() { 
   const followingPosts = await fetchFollowingPosts(0);
