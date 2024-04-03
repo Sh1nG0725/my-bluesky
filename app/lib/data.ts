@@ -1,17 +1,17 @@
-import { LatestPost } from './definitions';
+import { Actor, LatestPost } from './definitions';
 import { unstable_noStore as noStore } from 'next/cache';
-import { agent } from '@/app/lib/api';
+import { login } from '@/app/lib/api';
 import { auth } from '@/auth';
 import { ViewImage } from '@atproto/api/dist/client/types/app/bsky/embed/images';
 import { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
+import { ProfileView } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
 
 export async function fetchCardData() {
   noStore();
   try {
-    // 認証
     const session = await auth();
-    await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
-
+    // 認証
+    const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
     // フォロワー数を取得
     const followers = await agent.getFollowers({ actor: agent.session?.did || "" });
     const followersList = followers.data.followers;
@@ -48,10 +48,9 @@ export async function fetchLatestPosts() {
     //   await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
     // }
 
-    // 認証
     const session = await auth();
-    await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
-
+    // 認証
+    const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
     // 自分のポストを取得
     const tl = await agent.getAuthorFeed({ actor : session?.user.id || "", limit : 5 });
     const latestPosts = [];
@@ -65,6 +64,8 @@ export async function fetchLatestPosts() {
           createdAt = val as string;
         }
       }
+
+      // if (text) text = autoLink(text);
 
       const images = value.post.embed?.images as ViewImage[];
       const latestPost : LatestPost = {
@@ -97,10 +98,9 @@ export async function fetchFollowingPosts(page: number = 0) {
   try {
     let feed : FeedViewPost[] = [];
     if (page == 0) {
-      // 認証
       const session = await auth();
-      await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
-
+      // 認証
+      const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
       // タイムライン取得
       const tl = await agent.getTimeline({ limit : 50 });
       followingFeed = tl.data.feed.concat();
@@ -119,6 +119,9 @@ export async function fetchFollowingPosts(page: number = 0) {
           createdAt = val as string;
         }
       }
+
+      // if (text) text = autoLink(text);
+      // console.log(text)
 
       const images = value.post.embed?.images as ViewImage[];
       const latestPost : LatestPost = {
@@ -151,10 +154,9 @@ export async function fetchLikePosts(page: number = 0) {
   try {
     let feed : FeedViewPost[] = [];
     if (page == 0) {
-      // 認証
       const session = await auth();
-      await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
-
+      // 認証
+      const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
       // いいねしたポストを取得
       const tl = await agent.getActorLikes({ actor : session?.user.id || "", limit : 50 });
       likesFeed = tl.data.feed.concat();
@@ -173,6 +175,8 @@ export async function fetchLikePosts(page: number = 0) {
           createdAt = val as string;
         }
       }
+
+      // if (text) text = autoLink(text);
 
       const images = value.post.embed?.images as ViewImage[];
       const likePost : LatestPost = {
@@ -197,7 +201,7 @@ export async function fetchLikePosts(page: number = 0) {
   }
 }
 
-let searchFeed : FeedViewPost[] = [];
+let searchActors : ProfileView[] = [];
 export async function fetchSearchPosts(page: number = 0, query: string = "") {
   "use server"
 
@@ -205,46 +209,28 @@ export async function fetchSearchPosts(page: number = 0, query: string = "") {
   try {
     let feed : FeedViewPost[] = [];
     if (page == 0) {
-      // 認証
       const session = await auth();
-      await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
-
+      // 認証
+      const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
       // タイムライン取得
-      const tl = await agent.getTimeline({ limit : 50 });
-      searchFeed = tl.data.feed.concat();
+      const res = await agent.searchActors({ limit : 50, q : query });
+      searchActors = res.data.actors.concat();
     }
 
-    const latestPosts : LatestPost[] = [];
-    for (const [key, value] of Object.entries(searchFeed)) {
+    const actors : Actor[] = [];
+    for (const [key, value] of Object.entries(searchActors)) {
       if (!(Number(key) >= page*5 && Number(key) <= (page*5 + 4))) continue;
 
-      let text = "";
-      let createdAt = "";
-      for (const [key, val] of Object.entries(value.post.record)) {
-        if (key === "text") {
-          text = val as string;
-        } else if (key === "createdAt") {
-          createdAt = val as string;
-        }
-      }
-
-      const images = value.post.embed?.images as ViewImage[];
-      const latestPost : LatestPost = {
-        image_url: value.post.author.avatar || "",
-        displayName: value.post.author.displayName || "",
-        handle: value.post.author.handle || "",
-        text: text || "",
-        createdAt: new Date(createdAt).toLocaleString(),
-        embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
-        thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
-        like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
-        uri: value.post.uri,
-        cid: value.post.cid,
+      const actor : Actor = {
+        image_url: value.avatar || "",
+        displayName: value.displayName || "",
+        handle: value.handle || "",
+        description: value.description || "",
       };
-      latestPosts.push(latestPost);
+      actors.push(actor);
     }
 
-    return latestPosts;
+    return actors;
   } catch (error) {
     console.log(error);
     throw new Error('Failed to fetch the latest posts.');

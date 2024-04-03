@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Button } from "./button";
+import { Button } from "../button";
 
 export default function SearchButton({
   searchText,

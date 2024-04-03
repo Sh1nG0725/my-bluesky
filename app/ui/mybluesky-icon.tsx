@@ -3,7 +3,6 @@ import Image from 'next/image'
 
 export default async function MyBlueSkyIcon() {
   const session = await auth();
-  //console.log(session);
   return (
     <div style={{position: 'relative'}}>
       <Image

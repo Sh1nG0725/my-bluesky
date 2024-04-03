@@ -3,6 +3,7 @@ import NavLinks from '@/app/ui/dashboard/nav-links';
 import MyBlueSkyIcon from '@/app/ui/mybluesky-icon';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from '@/auth';
+import { unlink } from 'node:fs/promises';
 
 export default function SideNav() {
   return (

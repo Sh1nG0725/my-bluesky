@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { auth, signIn } from '@/auth';
 import { AuthError } from 'next-auth';
-import { agent } from '@/app/lib/api';
+import { login } from '@/app/lib/api';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -40,8 +40,9 @@ export async function createPost(prevState: State, formData: FormData) {
   
   try {
     const session = await auth();
-    await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
-    
+    // 認証
+    const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
+    // 投稿
     await agent.post({
       text: content,
     });

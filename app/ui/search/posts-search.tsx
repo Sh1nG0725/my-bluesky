@@ -4,13 +4,13 @@ import clsx from 'clsx';
 import Image from 'next/image';
 import { notoSansJP } from '@/app/ui/fonts';
 import Link from 'next/link';
-import { Like } from '../like';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { LatestPost } from '@/app/lib/definitions';
+import { Actor } from '@/app/lib/definitions';
+import { UserIcon } from '@heroicons/react/24/outline';
 
 type Props = {
-  initialItems: LatestPost[];
-  fetchSearchPosts: (page?: number) => Promise<LatestPost[]>;
+  initialItems: Actor[];
+  fetchSearchPosts: (page?: number) => Promise<Actor[]>;
 };
 
 const sleep = (sec: number) => new Promise(resolve =>
@@ -69,9 +69,12 @@ export function Posts({initialItems, fetchSearchPosts} : Props) {
   
   return (
     <div className="flex w-full flex-col md:col-span-4">
-      <h2 className={`${notoSansJP.className} mb-4 text-xl md:text-2xl`}>
-        <strong>Search Posts</strong>
-      </h2>
+      <div className="flex mb-4 items-center">
+        <UserIcon className="w-6 text-gray-700" />
+        <h2 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+          Users
+        </h2>
+      </div>
       {flatItems.length !== 0 ?
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         {/* NOTE: comment in this code when you get to this point in the course */}
@@ -109,33 +112,10 @@ export function Posts({initialItems, fetchSearchPosts} : Props) {
                     </p>
                     <p className="text-sm">
                       <span className="text-sm text-gray-500">{`@${post.handle}`}</span>
-                      <span className="ml-2 text-sm text-gray-500">{post.createdAt}</span>
                     </p>
-                    <p className="text-sm md:text-base">
-                      {post.text}
+                    <p className="text-sm mt-2">
+                      <span className="text-sm text-gray-500">{post.description}</span>
                     </p>
-                    { post.embedImage ?
-                      <div style={{minWidth:'55px'}} className='mr-4'>
-                      <Link
-                        href={post.embedImage}
-                        className=""
-                        target="_blank"
-                      >
-                        <Image
-                          src={post.thumbImage}
-                          alt={`${post.handle}'s embed picture`}
-                          className=""
-                          width={0}
-                          height={0}
-                          sizes="100vw"
-                          style={{ width: '80%', height: 'auto' }}
-                        />
-                      </Link>
-                      </div>
-                    : null}
-                    <div className="min-w-0">
-                      <Like post={post} items={items} setItems={setItems}/>
-                    </div>
                   </div>
                 </div>
               </div>

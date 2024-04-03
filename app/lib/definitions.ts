@@ -1,5 +1,3 @@
-import { BskyAgent } from "@atproto/api";
-
 // This file contains type definitions for your data.
 // It describes the shape of the data, and what data type each property should accept.
 // For simplicity of teaching, we're manually defining these types.
@@ -13,7 +11,6 @@ export type User = {
   app_password: string;
   displayName: string;
   handle: string;
-  agent: BskyAgent;
 };
 
 export type LatestPost = {
@@ -27,4 +24,11 @@ export type LatestPost = {
   like: string;
   uri: string;
   cid: string;
+};
+
+export type Actor = {
+  image_url: string;
+  displayName: string;
+  handle: string;
+  description: string;
 };

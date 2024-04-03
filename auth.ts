@@ -3,7 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import { authConfig } from './auth.config';
 import { z } from 'zod';
 import type { User } from '@/app/lib/definitions';
-import { agent } from '@/app/lib/api';
+import { loginTop } from '@/app/lib/api';
 
 export const { auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -17,7 +17,7 @@ export const { auth, signIn, signOut } = NextAuth({
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;
           // 認証
-          await agent.login({ identifier: email, password: password });
+          const agent = await loginTop(email, password);
           const { data } = await agent.getProfile({ actor: agent.session?.did || "" });
           // ユーザ情報作成
           const user = {

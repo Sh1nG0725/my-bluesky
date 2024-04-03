@@ -1,17 +1,20 @@
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { notoSansJP } from '@/app/ui/fonts';
 import { fetchLatestPosts } from '@/app/lib/data';
 import Link from 'next/link';
+import { ClockIcon } from '@heroicons/react/24/outline';
 
 export default async function LatestPosts() { 
   const latestPosts = await fetchLatestPosts();
   return (
     <div className="flex w-full flex-col md:col-span-4">
-      <h2 className={`${notoSansJP.className} mb-4 text-xl md:text-2xl`}>
-        <strong>Latest 5 Posts</strong>
-      </h2>
+      <div className="flex mb-4 items-center">
+        <ClockIcon className="w-6 text-gray-700" />
+        <h2 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+        Latest 5 Posts
+        </h2>
+      </div>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         {/* NOTE: comment in this code when you get to this point in the course */}
 

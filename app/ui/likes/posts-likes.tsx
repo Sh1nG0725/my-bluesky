@@ -7,16 +7,17 @@ import Link from 'next/link';
 import { Like } from '../like';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LatestPost } from '@/app/lib/definitions';
+import { HeartIcon } from '@heroicons/react/24/outline';
 
 type Props = {
   initialItems: LatestPost[];
-  fetchFollowingPosts: (page?: number) => Promise<LatestPost[]>;
+  fetchLikePosts: (page?: number) => Promise<LatestPost[]>;
 };
 
 const sleep = (sec: number) => new Promise(resolve =>
   setTimeout(resolve, sec * 1000));
 
-export function Posts({initialItems, fetchFollowingPosts} : Props) {
+export function Posts({initialItems, fetchLikePosts} : Props) {
 
   const observerTarget = useRef(null);
 
@@ -29,14 +30,14 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
   const loadMore = useCallback(
     async (page: number) => {
       await sleep(0.5);
-      const data = await fetchFollowingPosts(page);
+      const data = await fetchLikePosts(page);
       setItems((prev) => [...prev, data]);
 
       const count = data.length;
       console.log(`count:${count}`);
       setHasMore(count > 0);
     },
-    [fetchFollowingPosts]
+    [fetchLikePosts]
   );
   
   useEffect(() => {
@@ -69,9 +70,12 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
   
   return (
     <div className="flex w-full flex-col md:col-span-4">
-      <h2 className={`${notoSansJP.className} mb-4 text-xl md:text-2xl`}>
-        <strong>Following Posts</strong>
-      </h2>
+      <div className="flex mb-4 items-center">
+        <HeartIcon className="w-6 text-gray-700" />
+        <h1 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+        Likes Posts
+        </h1>
+      </div>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         {/* NOTE: comment in this code when you get to this point in the course */}
 

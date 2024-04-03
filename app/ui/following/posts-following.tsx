@@ -7,16 +7,34 @@ import Link from 'next/link';
 import { Like } from '../like';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LatestPost } from '@/app/lib/definitions';
+import { UserPlusIcon } from '@heroicons/react/24/outline';
 
 type Props = {
   initialItems: LatestPost[];
-  fetchLikePosts: (page?: number) => Promise<LatestPost[]>;
+  fetchFollowingPosts: (page?: number) => Promise<LatestPost[]>;
 };
 
 const sleep = (sec: number) => new Promise(resolve =>
   setTimeout(resolve, sec * 1000));
 
-export function Posts({initialItems, fetchLikePosts} : Props) {
+function autoLink(str:string) {
+  const regexp_url = /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?/g;
+  var regexp_makeLink = function(url:string) {
+      return '<a href="' + url + '" target="_blank">' + url + '</a>';
+  }
+  if (str.match(regexp_url) != null) {
+      const urlAllMatches = str.match(regexp_url);
+      if(urlAllMatches){
+          const urlMatches = new Set(urlAllMatches);
+          urlMatches.forEach(url => {
+              str = str.replaceAll(url, regexp_makeLink(url));
+          });
+      }
+  }
+  return str;
+}
+
+export function Posts({initialItems, fetchFollowingPosts} : Props) {
 
   const observerTarget = useRef(null);
 
@@ -29,14 +47,14 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
   const loadMore = useCallback(
     async (page: number) => {
       await sleep(0.5);
-      const data = await fetchLikePosts(page);
+      const data = await fetchFollowingPosts(page);
       setItems((prev) => [...prev, data]);
 
       const count = data.length;
       console.log(`count:${count}`);
       setHasMore(count > 0);
     },
-    [fetchLikePosts]
+    [fetchFollowingPosts]
   );
   
   useEffect(() => {
@@ -69,9 +87,12 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
   
   return (
     <div className="flex w-full flex-col md:col-span-4">
-      <h2 className={`${notoSansJP.className} mb-4 text-xl md:text-2xl`}>
-        <strong>Likes Posts</strong>
-      </h2>
+      <div className="flex mb-4 items-center">
+        <UserPlusIcon className="w-6 text-gray-700" />
+        <h1 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+        Following Posts
+        </h1>
+      </div>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
         {/* NOTE: comment in this code when you get to this point in the course */}
 
