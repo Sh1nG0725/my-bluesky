@@ -38,4 +38,5 @@ export const { auth, signIn, signOut } = NextAuth({
       },
     }),
   ],
+  session: { strategy: "jwt" },
 });
