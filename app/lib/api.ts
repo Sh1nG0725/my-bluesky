@@ -13,7 +13,7 @@ export const agent = new BskyAgent({
     // store the session-data for reuse
     savedSessionData = sesh;
     // ! Uncomment this line to save the session data to disk. Beware that this is a sensitive file!
-    writeFile('./session.json', JSON.stringify(sesh));
+    writeFile('/tmp/session.json', JSON.stringify(sesh));
   }
 })
 
@@ -47,7 +47,7 @@ export async function login(identifier: string, password: string) {
   }
   console.log(`Logging in...`);
   // See if we have saved session data
-  const sesh = await readFile('./session.json', { encoding: 'utf-8' }).catch(() => null);
+  const sesh = await readFile('/tmp/session.json', { encoding: 'utf-8' }).catch(() => null);
   if (sesh) {
     console.log('Found saved session data. Resuming session...');
     savedSessionData = JSON.parse(sesh);
