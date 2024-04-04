@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import { auth, signIn } from '@/auth';
 import { AuthError } from 'next-auth';
 import { login } from '@/app/lib/api';
+import { RichText } from '@atproto/api';
 
 const FormSchema = z.object({
   id: z.string(),
@@ -32,7 +33,7 @@ export async function createPost(prevState: State, formData: FormData) {
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Create Post.',
+      message: '',
     };
   }
 
@@ -42,9 +43,15 @@ export async function createPost(prevState: State, formData: FormData) {
     const session = await auth();
     // 認証
     const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
+
+    // リッチテキスト変換
+    const rt = new RichText({ text : content });
+    await rt.detectFacets(agent);
+
     // 投稿
     await agent.post({
-      text: content,
+      text: rt.text,
+      facets: rt.facets,
     });
   } catch (error) {
     return {

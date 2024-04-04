@@ -6,6 +6,40 @@ import { ViewImage } from '@atproto/api/dist/client/types/app/bsky/embed/images'
 import { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
 import { ProfileView } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
 
+function autoMention(str: string, did: string) {
+  const regexp_url = /@[a-zA-Z0-9-]+\.bsky\.social/g;
+  var regexp_makeLink = function(url:string) {
+      return '<a href="https://bsky.app/profile/' + did + '" target="_blank" rel="noopener">' + url + '</a>';
+  }
+  if (str.match(regexp_url) != null) {
+      const urlAllMatches = str.match(regexp_url);
+      if(urlAllMatches){
+          const urlMatches = new Set(urlAllMatches);
+          urlMatches.forEach(url => {
+              str = str.replaceAll(url, regexp_makeLink(url));
+          });
+      }
+  }
+  return str;
+}
+
+function autoLink(str:string) {
+  const regexp_url = /(https?|ftp):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3001-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+/g;
+  var regexp_makeLink = function(url:string) {
+      return '<a href="' + url + '" target="_blank" rel="noopener">' + url + '</a>';
+  }
+  if (str.match(regexp_url) != null) {
+      const urlAllMatches = str.match(regexp_url);
+      if(urlAllMatches){
+          const urlMatches = new Set(urlAllMatches);
+          urlMatches.forEach(url => {
+              str = str.replaceAll(url, regexp_makeLink(url));
+          });
+      }
+  }
+  return str;
+}
+
 export async function fetchCardData() {
   noStore();
   try {
@@ -36,23 +70,31 @@ export async function fetchCardData() {
   }
 }
 
+type RecordObj = {
+  '$type': string,
+  createdAt: string,
+  facets: [FacetsObj1, FacetsObj2],
+  text: string
+}
+type FacetsObj1 = {
+  '$type': string,
+  features: [ [Object] ],
+  index: { byteEnd: number, byteStart: number }
+}
+type FacetsObj2 = { 
+  features: [ [Object] ], 
+  index: { byteEnd: number, byteStart: number }
+}
+
 export async function fetchLatestPosts() {
   noStore();
   try {
-    // TODO:別コンポーネントのログイン状態をキープできない・・
-    // if (agent.hasSession) {
-    //   console.log("セッションあり");
-    // } else {
-    //   console.log("セッションなしのため再ログイン");
-    //   const session = await auth();
-    //   await agent.login({ identifier: session?.user?.email || "", password: session?.user?.app_password || "" });
-    // }
-
     const session = await auth();
     // 認証
     const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
     // 自分のポストを取得
     const tl = await agent.getAuthorFeed({ actor : session?.user.id || "", limit : 5 });
+    
     const latestPosts = [];
     for (const [key, value] of Object.entries(tl.data.feed)) {
       let text = "";
@@ -64,8 +106,8 @@ export async function fetchLatestPosts() {
           createdAt = val as string;
         }
       }
-
-      // if (text) text = autoLink(text);
+      if (text) text = autoLink(text);
+      if (text) text = autoMention(text, value.post.author.did);
 
       const images = value.post.embed?.images as ViewImage[];
       const latestPost : LatestPost = {
@@ -119,9 +161,7 @@ export async function fetchFollowingPosts(page: number = 0) {
           createdAt = val as string;
         }
       }
-
-      // if (text) text = autoLink(text);
-      // console.log(text)
+      if (text) text = autoLink(text);
 
       const images = value.post.embed?.images as ViewImage[];
       const latestPost : LatestPost = {
@@ -175,8 +215,7 @@ export async function fetchLikePosts(page: number = 0) {
           createdAt = val as string;
         }
       }
-
-      // if (text) text = autoLink(text);
+      if (text) text = autoLink(text);
 
       const images = value.post.embed?.images as ViewImage[];
       const likePost : LatestPost = {

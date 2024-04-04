@@ -4,6 +4,8 @@ import { notoSansJP } from '@/app/ui/fonts';
 import { fetchLatestPosts } from '@/app/lib/data';
 import Link from 'next/link';
 import { ClockIcon } from '@heroicons/react/24/outline';
+import parse from 'html-react-parser'
+import { replace } from '../link';
 
 export default async function LatestPosts() { 
   const latestPosts = await fetchLatestPosts();
@@ -54,7 +56,7 @@ export default async function LatestPosts() {
                       <span className="ml-2 text-sm text-gray-500">{post.createdAt}</span>
                     </p>
                     <p className="text-sm md:text-base">
-                      {post.text}
+                      { parse(post.text, { replace }) }
                     </p>
                     { post.embedImage ?
                       <div style={{minWidth:'55px'}} className='mr-4'>

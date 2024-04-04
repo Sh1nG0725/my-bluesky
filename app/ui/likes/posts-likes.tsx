@@ -8,6 +8,8 @@ import { Like } from '../like';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LatestPost } from '@/app/lib/definitions';
 import { HeartIcon } from '@heroicons/react/24/outline';
+import parse from 'html-react-parser'
+import { replace } from '../link';
 
 type Props = {
   initialItems: LatestPost[];
@@ -115,7 +117,7 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
                       <span className="ml-2 text-sm text-gray-500">{post.createdAt}</span>
                     </p>
                     <p className="text-sm md:text-base">
-                      {post.text}
+                      { parse(post.text, { replace }) }
                     </p>
                     { post.embedImage ?
                       <div style={{minWidth:'55px'}} className='mr-4'>
