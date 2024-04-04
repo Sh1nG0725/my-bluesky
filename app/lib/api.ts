@@ -19,7 +19,7 @@ export const agent = new BskyAgent({
 
 export async function loginTop(identifier: string, password: string) {
   console.log(`Top Logging in...`);
-  await deleteToken();
+  //await deleteToken();
   await agent.login({
     identifier: identifier,
     password: password
