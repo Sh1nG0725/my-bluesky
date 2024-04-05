@@ -1,13 +1,12 @@
 "use client"
 
-import { HeartIcon as HeartIconSolid } from '@heroicons/react/24/solid';
-import { HeartIcon as HeartIconOutline} from '@heroicons/react/24/outline';
+import { ArrowPathRoundedSquareIcon } from '@heroicons/react/24/solid';
 import { Dispatch, SetStateAction, useState } from 'react';
 import React from 'react';
 import { likeClick } from '../lib/likeClick';
 import { LatestPost } from '../lib/definitions';
 
-export function Like({post, items, setItems}: {
+export function Repost({post, items, setItems}: {
   post: LatestPost;
   items: LatestPost[][];
   setItems: Dispatch<SetStateAction<LatestPost[][]>>;
@@ -35,18 +34,18 @@ export function Like({post, items, setItems}: {
       <div className='flex'>
         <div 
           onClick={handleClick}
-          className={`flex justify-center items-center w-8 h-8 rounded-full text-gray-500 hover:text-pink-500 hover:bg-pink-200 hover:cursor-pointer`}
+          className={`flex justify-center items-center w-8 h-8 rounded-full text-gray-500 hover:text-emerald-500 hover:bg-emerald-200 hover:cursor-pointer`}
         >
-          <HeartIconOutline className={`w-5 h-5`} />
+          <ArrowPathRoundedSquareIcon className={`w-5 h-5`} />
         </div>
       </div>
     :
       <div className='flex'>
         <div 
           onClick={handleClick}
-          className={`flex justify-center items-center w-8 h-8 rounded-full text-pink-500 hover:bg-pink-200 hover:cursor-pointer`}
+          className={`flex justify-center items-center w-8 h-8 rounded-full text-emerald-500 hover:bg-emerald-200 hover:cursor-pointer`}
         >
-          <HeartIconSolid className={`w-5 h-5`} />
+          <ArrowPathRoundedSquareIcon className={`w-5 h-5`} />
         </div>
       </div>
     }

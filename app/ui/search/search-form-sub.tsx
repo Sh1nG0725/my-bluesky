@@ -7,7 +7,7 @@ import { useState } from 'react';
 export default function FormSub({
   query,
 }: {
-  query: string;
+  query?: string;
 }) {
   const [searchText, setSearchText] = useState("");
 

@@ -11,7 +11,7 @@ import { RichText } from '@atproto/api';
 const FormSchema = z.object({
   id: z.string(),
   content: z.string()
-  .max(200, { message: "200文字以内で入力してください" })
+  .max(300, { message: "300文字以内で入力してください" })
   .refine((value) => {
     return Boolean(value.trim().length)
   }, 'なにか言いたいことはあった？'),
@@ -58,8 +58,8 @@ export async function createPost(prevState: State, formData: FormData) {
       message: 'Failed to Post.',
     };
   }
-  revalidatePath('/dashboard');
-  redirect('/dashboard');
+  revalidatePath('/dashboard?post=send');
+  redirect('/dashboard?post=send');
 }
 
 export async function authenticate(

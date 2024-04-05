@@ -10,6 +10,7 @@ import { LatestPost } from '@/app/lib/definitions';
 import { UserPlusIcon } from '@heroicons/react/24/outline';
 import parse from 'html-react-parser'
 import { replace } from '../link';
+import { Repost } from '../repost';
 
 type Props = {
   initialItems: LatestPost[];
@@ -109,7 +110,7 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
                   },
                 )}
               >
-                <div className="flex items-start">
+                <div className="flex items-start w-full">
                   <div style={{minWidth:'55px'}} className='mr-4'>
                     <Link
                       href={`https://bsky.app/profile/${post.handle}`}
@@ -125,7 +126,7 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
                       />
                     </Link>
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 w-full">
                     <p className="text-sm">
                       <span className="font-semibold md:text-base">{post.displayName}</span>
                     </p>
@@ -133,7 +134,7 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
                       <span className="text-sm text-gray-500">{`@${post.handle}`}</span>
                       <span className="ml-2 text-sm text-gray-500">{post.createdAt}</span>
                     </p>
-                    <p className="text-sm md:text-base">
+                    <p className="whitespace-pre-wrap text-sm md:text-base">
                       { parse(post.text, { replace }) }
                     </p>
                     { post.embedImage ?
@@ -156,7 +157,8 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
                       </div>
                     : null}
                     <div className="min-w-0">
-                      <Like post={post} items={items} setItems={setItems}/>
+                      <div className='float-left'><Like post={post} items={items} setItems={setItems}/></div>
+                      <div className='float-right'><Repost post={post} items={items} setItems={setItems}/></div>
                     </div>
                   </div>
                 </div>

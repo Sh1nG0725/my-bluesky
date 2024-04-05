@@ -3,21 +3,29 @@
 import { useFormState } from 'react-dom';
 import { Button } from '@/app/ui/button';
 import { createPost } from '@/app/lib/actions';
+import { ChangeEvent, KeyboardEventHandler, useState } from 'react';
 
 export default function Form() {
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useFormState(createPost, initialState);
+
+  const [count, setCount] = useState(300);
+  function changeText(e: ChangeEvent<HTMLTextAreaElement>) {
+    setCount(300 - e.target.value.length);
+  }
+
   return (
     <form action={dispatch}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
         <div className="mb-4">
           <div className="relative mt-2 rounded-md">
             <div className="relative">
-              <input
+              <textarea
                 id="content"
                 name="content"
-                type="text"
-                placeholder="What's up?"
+                placeholder="最近どう？"
+                rows={5}
+                onChange={(e) => changeText(e)}
                 className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
               />
             </div>
@@ -30,6 +38,7 @@ export default function Form() {
               </p>
             ))}
           </div>
+          <div className="text-sm text-gray-700">文字数：{count}</div>
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">

@@ -144,7 +144,7 @@ export async function fetchFollowingPosts(page: number = 0) {
       // 認証
       const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
       // タイムライン取得
-      const tl = await agent.getTimeline({ limit : 50 });
+      const tl = await agent.getTimeline({ limit : 100 });
       followingFeed = tl.data.feed.concat();
     }
 
@@ -162,6 +162,7 @@ export async function fetchFollowingPosts(page: number = 0) {
         }
       }
       if (text) text = autoLink(text);
+      if (text) text = autoMention(text, value.post.author.did);
 
       const images = value.post.embed?.images as ViewImage[];
       const latestPost : LatestPost = {
@@ -198,7 +199,7 @@ export async function fetchLikePosts(page: number = 0) {
       // 認証
       const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
       // いいねしたポストを取得
-      const tl = await agent.getActorLikes({ actor : session?.user.id || "", limit : 50 });
+      const tl = await agent.getActorLikes({ actor : session?.user.id || "", limit : 100 });
       likesFeed = tl.data.feed.concat();
     }
 
@@ -216,6 +217,7 @@ export async function fetchLikePosts(page: number = 0) {
         }
       }
       if (text) text = autoLink(text);
+      if (text) text = autoMention(text, value.post.author.did);
 
       const images = value.post.embed?.images as ViewImage[];
       const likePost : LatestPost = {
@@ -241,7 +243,7 @@ export async function fetchLikePosts(page: number = 0) {
 }
 
 let searchActors : ProfileView[] = [];
-export async function fetchSearchPosts(page: number = 0, query: string = "") {
+export async function fetchSearchUsers(page: number = 0, query: string = "") {
   "use server"
 
   noStore();
@@ -252,8 +254,15 @@ export async function fetchSearchPosts(page: number = 0, query: string = "") {
       // 認証
       const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
       // タイムライン取得
-      const res = await agent.searchActors({ limit : 50, q : query });
-      searchActors = res.data.actors.concat();
+      if (query) {
+        const res = await agent.searchActors({ limit : 100, q : query });
+        searchActors = res.data.actors.concat();
+        console.log(searchActors);
+      } else {
+        const res = await agent.getSuggestions({ limit : 100 });
+        searchActors = res.data.actors.concat();
+        console.log(searchActors);
+      }
     }
 
     const actors : Actor[] = [];

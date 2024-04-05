@@ -55,7 +55,7 @@ export default async function LatestPosts() {
                       <span className="text-sm text-gray-500">{`@${post.handle}`}</span>
                       <span className="ml-2 text-sm text-gray-500">{post.createdAt}</span>
                     </p>
-                    <p className="text-sm md:text-base">
+                    <p className="whitespace-pre-wrap text-sm md:text-base">
                       { parse(post.text, { replace }) }
                     </p>
                     { post.embedImage ?
