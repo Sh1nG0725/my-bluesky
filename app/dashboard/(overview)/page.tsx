@@ -1,5 +1,3 @@
-"use client";
-
 import LatestPosts from '@/app/ui/dashboard/latest-posts';
 import { notoSansJP } from '@/app/ui/fonts';
 import { Suspense } from 'react';
