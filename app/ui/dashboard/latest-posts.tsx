@@ -7,13 +7,8 @@ import { ClockIcon } from '@heroicons/react/24/outline';
 import parse from 'html-react-parser'
 import { replace } from '../link';
 
-async function fetch() {
-  "use server"
-  return await fetchLatestPosts();
-}
-
 export default async function LatestPosts() { 
-  const latestPosts = await fetch();
+  const latestPosts = await fetchLatestPosts();
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <div className="flex mb-4 items-center">
