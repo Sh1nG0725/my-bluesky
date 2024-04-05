@@ -1,12 +1,7 @@
 import { fetchFollowingPosts } from '@/app/lib/data';
 import { Posts } from './posts-following';
 
-async function fetch() {
-  "use server"
-  return await fetchFollowingPosts(0);
-}
-
 export default async function FollowingPosts() { 
-  const followingPosts = await fetch();
+  const followingPosts = await fetchFollowingPosts(0);
   return <Posts initialItems={followingPosts} fetchFollowingPosts={fetchFollowingPosts} />;
 }
