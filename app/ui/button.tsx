@@ -4,6 +4,11 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
+/**
+ * ボタン
+ * @param param0 
+ * @returns ボタン
+ */
 export function Button({ children, className, ...rest }: ButtonProps) {
   return (
     <button

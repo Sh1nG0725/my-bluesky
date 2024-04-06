@@ -7,6 +7,10 @@ import { ClockIcon } from '@heroicons/react/24/outline';
 import parse from 'html-react-parser'
 import { replace } from '../link';
 
+/**
+ * 最近のポスト全体
+ * @returns 表示内容
+ */
 export default async function LatestPosts() { 
   const latestPosts = await fetchLatestPosts();
   return (
@@ -14,12 +18,10 @@ export default async function LatestPosts() {
       <div className="flex mb-4 items-center">
         <ClockIcon className="w-6 text-gray-700" />
         <h2 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
-        Latest 5 Posts
+        Latest Your 5 Posts
         </h2>
       </div>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        {/* NOTE: comment in this code when you get to this point in the course */}
-
         <div className="bg-white px-6">
           {latestPosts.map((post, i) => {
             return (

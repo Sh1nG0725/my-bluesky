@@ -6,6 +6,12 @@ import { ViewImage } from '@atproto/api/dist/client/types/app/bsky/embed/images'
 import { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
 import { ProfileView } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
 
+/**
+ * メンションの解析
+ * @param str 
+ * @param did 
+ * @returns 解析結果
+ */
 function autoMention(str: string, did: string) {
   const regexp_url = /@[a-zA-Z0-9-]+\.bsky\.social/g;
   var regexp_makeLink = function(url:string) {
@@ -23,6 +29,11 @@ function autoMention(str: string, did: string) {
   return str;
 }
 
+/**
+ * リンクの解析
+ * @param str 
+ * @returns 解析結果
+ */
 function autoLink(str:string) {
   const regexp_url = /(https?|ftp):\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#\u3001-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+/g;
   var regexp_makeLink = function(url:string) {
@@ -40,6 +51,10 @@ function autoLink(str:string) {
   return str;
 }
 
+/**
+ * カードデータの取得
+ * @returns 取得結果
+ */
 export async function fetchCardData() {
   noStore();
   try {
@@ -70,22 +85,10 @@ export async function fetchCardData() {
   }
 }
 
-type RecordObj = {
-  '$type': string,
-  createdAt: string,
-  facets: [FacetsObj1, FacetsObj2],
-  text: string
-}
-type FacetsObj1 = {
-  '$type': string,
-  features: [ [Object] ],
-  index: { byteEnd: number, byteStart: number }
-}
-type FacetsObj2 = { 
-  features: [ [Object] ], 
-  index: { byteEnd: number, byteStart: number }
-}
-
+/**
+ * 最近のポストの取得
+ * @returns 取得結果
+ */
 export async function fetchLatestPosts() {
   noStore();
   try {
@@ -119,6 +122,7 @@ export async function fetchLatestPosts() {
         embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
         thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
         like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
+        repost: (value.post.viewer && value.post.viewer.repost) ? value.post.viewer.repost : "",
         uri: value.post.uri,
         cid: value.post.cid,
       };
@@ -133,6 +137,11 @@ export async function fetchLatestPosts() {
 }
 
 let followingFeed : FeedViewPost[] = [];
+/**
+ * フォローイングのポストの取得
+ * @param page 
+ * @returns 取得結果
+ */
 export async function fetchFollowingPosts(page: number = 0) {
   "use server"
 
@@ -146,6 +155,7 @@ export async function fetchFollowingPosts(page: number = 0) {
       // タイムライン取得
       const tl = await agent.getTimeline({ limit : 100 });
       followingFeed = tl.data.feed.concat();
+      console.log(`followingFeed:${followingFeed.length}`);
     }
 
     const latestPosts : LatestPost[] = [];
@@ -174,6 +184,7 @@ export async function fetchFollowingPosts(page: number = 0) {
         embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
         thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
         like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
+        repost: (value.post.viewer && value.post.viewer.repost) ? value.post.viewer.repost : "",
         uri: value.post.uri,
         cid: value.post.cid,
       };
@@ -188,6 +199,11 @@ export async function fetchFollowingPosts(page: number = 0) {
 }
 
 let likesFeed : FeedViewPost[] = [];
+/**
+ * いいねポストの取得
+ * @param page 
+ * @returns 取得結果
+ */
 export async function fetchLikePosts(page: number = 0) {
   "use server"
 
@@ -201,6 +217,7 @@ export async function fetchLikePosts(page: number = 0) {
       // いいねしたポストを取得
       const tl = await agent.getActorLikes({ actor : session?.user.id || "", limit : 100 });
       likesFeed = tl.data.feed.concat();
+      console.log(`likesFeed:${likesFeed.length}`);
     }
 
     const latestPosts : LatestPost[] = [];
@@ -229,6 +246,7 @@ export async function fetchLikePosts(page: number = 0) {
         embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
         thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
         like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
+        repost: (value.post.viewer && value.post.viewer.repost) ? value.post.viewer.repost : "",
         uri: value.post.uri,
         cid: value.post.cid,
       };
@@ -243,6 +261,12 @@ export async function fetchLikePosts(page: number = 0) {
 }
 
 let searchActors : ProfileView[] = [];
+/**
+ * ユーザーの検索
+ * @param page 
+ * @param query 
+ * @returns 検索結果
+ */
 export async function fetchSearchUsers(page: number = 0, query: string = "") {
   "use server"
 

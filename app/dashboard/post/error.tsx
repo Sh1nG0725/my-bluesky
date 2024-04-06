@@ -2,6 +2,11 @@
  
 import { useEffect } from 'react';
  
+/**
+ * 投稿のエラーページ
+ * @param param0 
+ * @returns エラーページ
+ */
 export default function Error({
   error,
   reset,

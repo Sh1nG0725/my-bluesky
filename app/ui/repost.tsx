@@ -3,34 +3,42 @@
 import { ArrowPathRoundedSquareIcon } from '@heroicons/react/24/solid';
 import { Dispatch, SetStateAction, useState } from 'react';
 import React from 'react';
-import { likeClick } from '../lib/likeClick';
 import { LatestPost } from '../lib/definitions';
+import { repostClick } from '../lib/repostClick';
+import { toast } from 'react-toastify';
 
+/**
+ * リポストリンク
+ * @param param0 
+ * @returns リポストリンク
+ */
 export function Repost({post, items, setItems}: {
   post: LatestPost;
   items: LatestPost[][];
   setItems: Dispatch<SetStateAction<LatestPost[][]>>;
 }) {
-  const [isLike, setLike] = useState((post.like) ? true : false);
+  const [isRepost, setRepost] = useState((post.repost) ? true : false);
   
   async function handleClick() {
-    const response = await likeClick(post.like, post.uri, post.cid);
+    const response = await repostClick(post.repost, post.uri, post.cid);
     const nextShapes = items[0].map(pt => {
       if (pt.uri === post.uri) {
         if (response) {
-          pt.like = response['uri'];
+          pt.repost = response['uri'];
+          toast.info("リポストをしました");
         } else {
-          pt.like = "";
+          pt.repost = "";
+          toast.info("リポストを取り消しました");
         }
         return pt;
       }
     });
     setItems(items);
-    setLike(isLike => !isLike);
+    setRepost(isRepost => !isRepost);
   }
   return (
     <>
-    {!post.like ? 
+    {!post.repost ? 
       <div className='flex'>
         <div 
           onClick={handleClick}

@@ -10,15 +10,18 @@ import { LatestPost } from '@/app/lib/definitions';
 import { HeartIcon } from '@heroicons/react/24/outline';
 import parse from 'html-react-parser'
 import { replace } from '../link';
+import { Repost } from '../repost';
 
 type Props = {
   initialItems: LatestPost[];
   fetchLikePosts: (page?: number) => Promise<LatestPost[]>;
 };
 
-const sleep = (sec: number) => new Promise(resolve =>
-  setTimeout(resolve, sec * 1000));
-
+/**
+ * いいねポストの内容
+ * @param param0 
+ * @returns 表示内容
+ */
 export function Posts({initialItems, fetchLikePosts} : Props) {
 
   const observerTarget = useRef(null);
@@ -31,12 +34,9 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
 
   const loadMore = useCallback(
     async (page: number) => {
-      await sleep(0.5);
       const data = await fetchLikePosts(page);
       setItems((prev) => [...prev, data]);
-
       const count = data.length;
-      console.log(`count:${count}`);
       setHasMore(count > 0);
     },
     [fetchLikePosts]
@@ -79,8 +79,6 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
         </h1>
       </div>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        {/* NOTE: comment in this code when you get to this point in the course */}
-
         <div className="bg-white px-6">
           {flatItems.map((post, i) => {
             return (
@@ -139,7 +137,8 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
                       </div>
                     : null}
                     <div className="min-w-0">
-                      <Like post={post} items={items} setItems={setItems}/>
+                      <div className='float-left'><Like post={post} items={items} setItems={setItems}/></div>
+                      <div className='float-right'><Repost post={post} items={items} setItems={setItems}/></div>
                     </div>
                   </div>
                 </div>

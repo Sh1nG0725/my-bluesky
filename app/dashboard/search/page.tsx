@@ -2,6 +2,11 @@ import { notoSansJP } from '@/app/ui/fonts';
 import Form from '@/app/ui/search/search-form';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
+/**
+ * 検索のページ全体
+ * @param param0 
+ * @returns ページ
+ */
 export default async function Page({
   searchParams,
 }: {
@@ -10,7 +15,6 @@ export default async function Page({
   };
 }) {
   const query = searchParams?.query || '';
-
   return (
     <main>
       <div className="flex mb-4 items-center">

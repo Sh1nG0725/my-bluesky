@@ -12,6 +12,10 @@ const iconMap = {
   pencil: PencilSquareIcon,
 };
 
+/**
+ * カード情報全体
+ * @returns 表示内容
+ */
 export default async function CardWrapper() {
   const {
     numberOfFollowers,
@@ -21,7 +25,6 @@ export default async function CardWrapper() {
 
   return (
     <>
-      {/* NOTE: comment in this code when you get to this point in the course */}
       <Card title="Followers" value={numberOfFollowers} type="users" />
       <Card title="Following" value={numberOfFollowing} type="userplus" />
       <Card title="Post" value={numberofPost} type="pencil" />
@@ -29,6 +32,11 @@ export default async function CardWrapper() {
   );
 }
 
+/**
+ * カード情報
+ * @param param0 
+ * @returns カード情報
+ */
 export function Card({
   title,
   value,

@@ -19,24 +19,11 @@ export const agent = new BskyAgent({
 
 export async function loginTop(identifier: string, password: string) {
   console.log(`Top Logging in...`);
-  //await deleteToken();
   await agent.login({
     identifier: identifier,
     password: password
   })
   return agent;
-}
-
-async function deleteToken() {
-  if (savedSessionData) {
-    //リクエストエンドポイント
-    let endpoint = "https://bsky.social/xrpc/com.atproto.server.deleteSession";
-    const result = await fetch(endpoint, {
-      headers: {
-        Authorization: "Bearer " + savedSessionData.refreshJwt
-      }
-    })
-  }
 }
 
 export async function login(identifier: string, password: string) {

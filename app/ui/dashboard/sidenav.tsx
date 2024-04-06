@@ -3,8 +3,11 @@ import NavLinks from '@/app/ui/dashboard/nav-links';
 import MyBlueSkyIcon from '@/app/ui/mybluesky-icon';
 import { PowerIcon } from '@heroicons/react/24/outline';
 import { signOut } from '@/auth';
-import { unlink } from 'node:fs/promises';
 
+/**
+ * サイド表示の全体
+ * @returns 表示内容
+ */
 export default function SideNav() {
   return (
     <div className="flex h-full flex-col px-3 py-4 md:px-2">

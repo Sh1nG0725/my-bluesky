@@ -17,26 +17,11 @@ type Props = {
   fetchFollowingPosts: (page?: number) => Promise<LatestPost[]>;
 };
 
-const sleep = (sec: number) => new Promise(resolve =>
-  setTimeout(resolve, sec * 1000));
-
-function autoLink(str:string) {
-  const regexp_url = /((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?/g;
-  var regexp_makeLink = function(url:string) {
-      return '<a href="' + url + '" target="_blank">' + url + '</a>';
-  }
-  if (str.match(regexp_url) != null) {
-      const urlAllMatches = str.match(regexp_url);
-      if(urlAllMatches){
-          const urlMatches = new Set(urlAllMatches);
-          urlMatches.forEach(url => {
-              str = str.replaceAll(url, regexp_makeLink(url));
-          });
-      }
-  }
-  return str;
-}
-
+/**
+ * フォローイングポストの内容
+ * @param param0 
+ * @returns 表示内容
+ */
 export function Posts({initialItems, fetchFollowingPosts} : Props) {
 
   const observerTarget = useRef(null);
@@ -49,12 +34,9 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
 
   const loadMore = useCallback(
     async (page: number) => {
-      await sleep(0.5);
       const data = await fetchFollowingPosts(page);
       setItems((prev) => [...prev, data]);
-
       const count = data.length;
-      console.log(`count:${count}`);
       setHasMore(count > 0);
     },
     [fetchFollowingPosts]
@@ -97,8 +79,6 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
         </h1>
       </div>
       <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        {/* NOTE: comment in this code when you get to this point in the course */}
-
         <div className="bg-white px-6">
           {flatItems.map((post, i) => {
             return (

@@ -11,8 +11,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import clsx from 'clsx';
 
-// Map of links to display in the side navigation.
-// Depending on the size of the application, this would be stored in a database.
+/**
+ * リンクリスト
+ */
 const links = [
   {
     name: 'Home', 
@@ -41,6 +42,10 @@ const links = [
   },
 ];
 
+/**
+ * ナビゲーションリンクの全体
+ * @returns 表示情報
+ */
 export default function NavLinks() {
   const pathname = usePathname();
   return (

@@ -5,8 +5,11 @@ import { LatestPostsSkeleton,CardsSkeleton } from '@/app/ui/skeletons';
 import CardWrapper from '@/app/ui/dashboard/cards';
 import { PresentationChartBarIcon } from '@heroicons/react/24/outline';
 
+/**
+ * ダッシュボードのコンテンツ
+ * @returns コンテンツ
+ */
 export const Contents: FC = () => {
-  console.log("Contents");
   return (
     <>
       <div className="flex mb-4 items-center">

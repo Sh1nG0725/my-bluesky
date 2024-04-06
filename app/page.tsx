@@ -2,6 +2,10 @@ import MyBlueSkyLogo from '@/app/ui/mybluesky-logo';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
+/**
+ * トップページ
+ * @returns トップページ
+ */
 export default function Page() {
   return (
     <main className="flex min-h-screen flex-col p-6">

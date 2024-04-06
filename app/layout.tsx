@@ -12,6 +12,11 @@ export const metadata: Metadata = {
   description: 'My BlueSky',
 };
 
+/**
+ * 全体レイアウト
+ * @param param0 
+ * @returns レイアウト
+ */
 export default function RootLayout({
   children,
 }: {

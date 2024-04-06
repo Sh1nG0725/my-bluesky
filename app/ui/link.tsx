@@ -1,5 +1,10 @@
 import { domToReact } from 'html-react-parser'
 
+/**
+ * aタグ変換
+ * @param node 
+ * @returns 変換後HTML
+ */
 export function replace(node: any) {
   if (node.name === 'a') {
     return (

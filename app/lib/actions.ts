@@ -25,11 +25,18 @@ export type State = {
 };
 
 const CreatePost = FormSchema.omit({ id: true });
+/**
+ * 投稿する
+ * @param prevState 
+ * @param formData 
+ * @returns エラー
+ */
 export async function createPost(prevState: State, formData: FormData) {
   const validatedFields = CreatePost.safeParse({
     content: formData.get('content'),
   });
 
+  // バリデーション
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
@@ -38,16 +45,13 @@ export async function createPost(prevState: State, formData: FormData) {
   }
 
   const { content } = validatedFields.data;
-  
   try {
     const session = await auth();
     // 認証
     const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
-
     // リッチテキスト変換
     const rt = new RichText({ text : content });
     await rt.detectFacets(agent);
-
     // 投稿
     await agent.post({
       text: rt.text,
@@ -58,10 +62,17 @@ export async function createPost(prevState: State, formData: FormData) {
       message: 'Failed to Post.',
     };
   }
+  // リダイレクト
   revalidatePath('/dashboard?post=send');
   redirect('/dashboard?post=send');
 }
 
+/**
+ * 認証する
+ * @param prevState 
+ * @param formData 
+ * @returns エラー
+ */
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData,

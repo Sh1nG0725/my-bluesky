@@ -3,8 +3,12 @@
 import { useFormState } from 'react-dom';
 import { Button } from '@/app/ui/button';
 import { createPost } from '@/app/lib/actions';
-import { ChangeEvent, KeyboardEventHandler, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 
+/**
+ * 投稿フォーム
+ * @returns 表示内容
+ */
 export default function Form() {
   const initialState = { message: null, errors: {} };
   const [state, dispatch] = useFormState(createPost, initialState);

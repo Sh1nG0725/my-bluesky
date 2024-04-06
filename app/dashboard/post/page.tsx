@@ -2,6 +2,10 @@ import { notoSansJP } from '@/app/ui/fonts';
 import Form from '@/app/ui/post/create-form';
 import { PencilSquareIcon } from '@heroicons/react/24/outline';
 
+/**
+ * 投稿のページ全体
+ * @returns ページ
+ */
 export default async function Page() {
   return (
     <main>
