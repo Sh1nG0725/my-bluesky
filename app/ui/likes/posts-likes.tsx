@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Like } from '../like';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LatestPost } from '@/app/lib/definitions';
-import { HeartIcon } from '@heroicons/react/24/outline';
+import { HeartIcon, ArrowPathRoundedSquareIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 import parse from 'html-react-parser'
 import { replace } from '../link';
 import { Repost } from '../repost';
@@ -90,7 +90,7 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
                   },
                 )}
               >
-                <div className="flex items-start">
+                <div className="flex items-start w-full">
                   <div style={{minWidth:'55px'}} className='mr-4'>
                     <Link
                       href={`https://bsky.app/profile/${post.handle}`}
@@ -106,7 +106,19 @@ export function Posts({initialItems, fetchLikePosts} : Props) {
                       />
                     </Link>
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 w-full">
+                    { post.reason ?
+                    <p className="text-sm flex">
+                      <ArrowPathRoundedSquareIcon className={`text-gray-500 w-4 h-4`} />
+                      <span className="font-semibold text-xs text-gray-500">{post.reason}</span>
+                    </p>
+                    : null}
+                    { post.reply ?
+                    <p className="text-sm flex">
+                      <ArrowUturnLeftIcon className={`text-gray-500 w-4 h-4`} />
+                      <span className="font-semibold text-xs text-gray-500">{post.reply}</span>
+                    </p>
+                    : null}
                     <p className="text-sm">
                       <span className="font-semibold md:text-base">{post.displayName}</span>
                     </p>

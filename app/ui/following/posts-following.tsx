@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Like } from '../like';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { LatestPost } from '@/app/lib/definitions';
-import { UserPlusIcon } from '@heroicons/react/24/outline';
+import { UserPlusIcon, ArrowPathRoundedSquareIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 import parse from 'html-react-parser'
 import { replace } from '../link';
 import { Repost } from '../repost';
@@ -107,6 +107,18 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
                     </Link>
                   </div>
                   <div className="min-w-0 w-full">
+                    { post.reason ?
+                    <p className="text-sm flex">
+                      <ArrowPathRoundedSquareIcon className={`text-gray-500 w-4 h-4`} />
+                      <span className="font-semibold text-xs text-gray-500">{post.reason}</span>
+                    </p>
+                    : null}
+                    { post.reply ?
+                    <p className="text-sm flex">
+                      <ArrowUturnLeftIcon className={`text-gray-500 w-4 h-4`} />
+                      <span className="font-semibold text-xs text-gray-500">{post.reply}</span>
+                    </p>
+                    : null}
                     <p className="text-sm">
                       <span className="font-semibold md:text-base">{post.displayName}</span>
                     </p>

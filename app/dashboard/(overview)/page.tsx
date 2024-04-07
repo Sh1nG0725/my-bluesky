@@ -1,4 +1,4 @@
-import { FC, Suspense } from 'react';
+import { FC } from 'react';
 import { Contents } from './content';
 import 'react-toastify/dist/ReactToastify.css';
 import { Providers } from './providers';

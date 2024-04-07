@@ -3,7 +3,7 @@ import Image from 'next/image';
 import { notoSansJP } from '@/app/ui/fonts';
 import { fetchLatestPosts } from '@/app/lib/data';
 import Link from 'next/link';
-import { ClockIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, ArrowPathRoundedSquareIcon, ArrowUturnLeftIcon } from '@heroicons/react/24/outline';
 import parse from 'html-react-parser'
 import { replace } from '../link';
 
@@ -50,6 +50,18 @@ export default async function LatestPosts() {
                     </Link>
                   </div>
                   <div className="min-w-0">
+                    { post.reason ?
+                    <p className="text-sm flex">
+                      <ArrowPathRoundedSquareIcon className={`text-gray-500 w-4 h-4`} />
+                      <span className="font-semibold text-xs text-gray-500">{post.reason}</span>
+                    </p>
+                    : null}
+                    { post.reply ?
+                    <p className="text-sm flex">
+                      <ArrowUturnLeftIcon className={`text-gray-500 w-4 h-4`} />
+                      <span className="font-semibold text-xs text-gray-500">{post.reply}</span>
+                    </p>
+                    : null}
                     <p className="text-sm">
                       <span className="font-semibold md:text-base">{post.displayName}</span>
                     </p>

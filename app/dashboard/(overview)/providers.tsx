@@ -1,9 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { Props } from "next/script";
 import { FC, useEffect } from "react";
 import { toast } from "react-toastify";
+
+type Props = {
+  children?: React.ReactNode;
+};
 
 /**
  * ダッシューボードのプロバイダ
@@ -16,7 +19,8 @@ export const Providers: FC<Props> = ({ children }) => {
   useEffect(() => {
     if (post) {
       toast.info("ポストしました");
-    }  
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   },[])
 
   return (

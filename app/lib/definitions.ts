@@ -27,6 +27,8 @@ export type LatestPost = {
   repost: string;
   uri: string;
   cid: string;
+  reason?: string;
+  reply?: string;
 };
 
 /**

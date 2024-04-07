@@ -4,7 +4,87 @@ import { login } from '@/app/lib/api';
 import { auth } from '@/auth';
 import { ViewImage } from '@atproto/api/dist/client/types/app/bsky/embed/images';
 import { FeedViewPost } from '@atproto/api/dist/client/types/app/bsky/feed/defs';
-import { ProfileView } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
+import { ProfileView, ProfileViewBasic } from '@atproto/api/dist/client/types/app/bsky/actor/defs';
+
+type Record = {
+  text: string;
+  createdAt: string;
+}
+type By = {
+  did: string;
+  handle: string;
+  displayName?: string;
+  avatar?: string;
+}
+type Profile = {
+  did: string;
+  handle: string;
+  displayName?: string;
+  avatar?: string;
+}
+
+/**
+ * Feed内容の解析
+ * @param feed 
+ * @returns 解析結果
+ */
+function analysisFeed(feed: FeedViewPost) {
+  let text = "";
+  let createdAt = "";
+  if (feed.post.record) {
+    const record = feed.post.record as Record;
+    text = record.text;
+    createdAt = record.createdAt
+  }
+  let reason = "";
+  if (feed.reason) {
+    if (feed.reason.$type === "app.bsky.feed.defs#reasonRepost") {
+      const by = feed.reason.by as By;
+      reason = `${by.displayName}によるリポスト`;
+    }
+  }
+  let reply = "";
+  if (feed.reply) {
+    const author = feed.reply.parent.author as ProfileViewBasic;
+    reply = `${author.displayName}に返信`;
+  }
+
+  return {
+    text,
+    createdAt,
+    reason,
+    reply
+  };
+}
+
+/**
+ * ポスト情報作成
+ * @param feed 
+ * @param text 
+ * @param createdAt 
+ * @param reason 
+ * @param reply 
+ * @returns ポスト情報
+ */
+function createPost(feed: FeedViewPost, text: string, createdAt: string, reason: string, reply: string) {
+  const images = feed.post.embed?.images as ViewImage[];
+  const post : LatestPost = {
+    image_url: feed.post.author.avatar || "",
+    displayName: feed.post.author.displayName || "",
+    handle: feed.post.author.handle || "",
+    text: text || "",
+    createdAt: new Date(createdAt).toLocaleString(),
+    embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
+    thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
+    like: (feed.post.viewer && feed.post.viewer.like) ? feed.post.viewer.like : "",
+    repost: (feed.post.viewer && feed.post.viewer.repost) ? feed.post.viewer.repost : "",
+    uri: feed.post.uri,
+    cid: feed.post.cid,
+    reason: reason,
+    reply: reply,
+  };
+  return post;
+}
 
 /**
  * メンションの解析
@@ -100,32 +180,13 @@ export async function fetchLatestPosts() {
     
     const latestPosts = [];
     for (const [key, value] of Object.entries(tl.data.feed)) {
-      let text = "";
-      let createdAt = "";
-      for (const [key, val] of Object.entries(value.post.record)) {
-        if (key === "text") {
-          text = val as string;
-        } else if (key === "createdAt") {
-          createdAt = val as string;
-        }
-      }
+      // Feed解析
+      let { text, createdAt, reason, reply } = analysisFeed(value);
       if (text) text = autoLink(text);
       if (text) text = autoMention(text, value.post.author.did);
 
-      const images = value.post.embed?.images as ViewImage[];
-      const latestPost : LatestPost = {
-        image_url: value.post.author.avatar || "",
-        displayName: value.post.author.displayName || "",
-        handle: value.post.author.handle || "",
-        text: text || "",
-        createdAt: new Date(createdAt).toLocaleString(),
-        embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
-        thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
-        like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
-        repost: (value.post.viewer && value.post.viewer.repost) ? value.post.viewer.repost : "",
-        uri: value.post.uri,
-        cid: value.post.cid,
-      };
+      // ポスト情報作成
+      const latestPost = createPost(value, text, createdAt, reason, reply);
       latestPosts.push(latestPost);
     }
 
@@ -161,33 +222,13 @@ export async function fetchFollowingPosts(page: number = 0) {
     const latestPosts : LatestPost[] = [];
     for (const [key, value] of Object.entries(followingFeed)) {
       if (!(Number(key) >= page*5 && Number(key) <= (page*5 + 4))) continue;
-
-      let text = "";
-      let createdAt = "";
-      for (const [key, val] of Object.entries(value.post.record)) {
-        if (key === "text") {
-          text = val as string;
-        } else if (key === "createdAt") {
-          createdAt = val as string;
-        }
-      }
+      // Feed解析
+      let { text, createdAt, reason, reply } = analysisFeed(value);
       if (text) text = autoLink(text);
       if (text) text = autoMention(text, value.post.author.did);
 
-      const images = value.post.embed?.images as ViewImage[];
-      const latestPost : LatestPost = {
-        image_url: value.post.author.avatar || "",
-        displayName: value.post.author.displayName || "",
-        handle: value.post.author.handle || "",
-        text: text || "",
-        createdAt: new Date(createdAt).toLocaleString(),
-        embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
-        thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
-        like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
-        repost: (value.post.viewer && value.post.viewer.repost) ? value.post.viewer.repost : "",
-        uri: value.post.uri,
-        cid: value.post.cid,
-      };
+      // ポスト情報作成
+      const latestPost = createPost(value, text, createdAt, reason, reply);
       latestPosts.push(latestPost);
     }
 
@@ -223,33 +264,13 @@ export async function fetchLikePosts(page: number = 0) {
     const latestPosts : LatestPost[] = [];
     for (const [key, value] of Object.entries(likesFeed)) {
       if (!(Number(key) >= page*5 && Number(key) <= (page*5 + 4))) continue;
-      
-      let text = "";
-      let createdAt = "";
-      for (const [key, val] of Object.entries(value.post.record)) {
-        if (key === "text") {
-          text = val as string;
-        } else if (key === "createdAt") {
-          createdAt = val as string;
-        }
-      }
+      // Feed解析
+      let { text, createdAt, reason, reply } = analysisFeed(value);
       if (text) text = autoLink(text);
       if (text) text = autoMention(text, value.post.author.did);
 
-      const images = value.post.embed?.images as ViewImage[];
-      const likePost : LatestPost = {
-        image_url: value.post.author.avatar || "",
-        displayName: value.post.author.displayName || "",
-        handle: value.post.author.handle || "",
-        text: text || "",
-        createdAt: new Date(createdAt).toLocaleString(),
-        embedImage: (images && images.length !== 0) ? images[0].fullsize || "" : "",
-        thumbImage: (images && images.length !== 0) ? images[0].thumb || "" : "",
-        like: (value.post.viewer && value.post.viewer.like) ? value.post.viewer.like : "",
-        repost: (value.post.viewer && value.post.viewer.repost) ? value.post.viewer.repost : "",
-        uri: value.post.uri,
-        cid: value.post.cid,
-      };
+      // ポスト情報作成
+      const likePost = createPost(value, text, createdAt, reason, reply);
       latestPosts.push(likePost);
     }
 
