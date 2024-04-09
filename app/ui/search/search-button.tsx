@@ -19,7 +19,6 @@ export default function SearchButton({
     if (searchText) {
       params.set('query', searchText);
     }
-    console.log(`${pathname}?${params.toString()}`);
     replace(`${pathname}?${params.toString()}`);
   }
   return (

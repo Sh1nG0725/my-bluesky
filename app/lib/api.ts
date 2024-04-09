@@ -18,10 +18,10 @@ export const agent = new BskyAgent({
 })
 
 export async function loginTop(identifier: string, password: string) {
-  console.log(`Top Logging in...`);
+  console.log(`(Top)Logging in...${identifier}`);
   await agent.login({
     identifier: identifier,
-    password: password
+    password: password,
   })
   return agent;
 }
@@ -32,7 +32,7 @@ export async function login(identifier: string, password: string) {
     console.log('Already logged in...');
     return agent;
   }
-  console.log(`Logging in...`);
+  console.log(`Logging in...${identifier}`);
   // See if we have saved session data
   const sesh = await readFile(process.env.SESSION_SAVE_PATH as string, { encoding: 'utf-8' }).catch(() => null);
   if (sesh) {

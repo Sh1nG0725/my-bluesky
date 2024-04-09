@@ -20,7 +20,7 @@ export default function Form() {
 
   return (
     <form action={dispatch}>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
+      <div className="rounded-md bg-gray-50 dark:bg-slate-700 dark:text-white p-4 md:p-6">
         <div className="mb-4">
           <div className="relative mt-2 rounded-md">
             <div className="relative">
@@ -30,7 +30,7 @@ export default function Form() {
                 placeholder="最近どう？"
                 rows={5}
                 onChange={(e) => changeText(e)}
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 dark:bg-black dark:placeholder:text-white"
               />
             </div>
           </div>
@@ -42,7 +42,7 @@ export default function Form() {
               </p>
             ))}
           </div>
-          <div className="text-sm text-gray-700">文字数：{count}</div>
+          <div className="text-sm text-gray-700 dark:text-white">文字数：{count}</div>
         </div>
       </div>
       <div className="mt-6 flex justify-end gap-4">

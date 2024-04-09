@@ -18,6 +18,7 @@ Next.js/Reactを用いたBlueskyクライアントになります
 - ユーザー検索
 - タイムライン表示
 - いいねリスト表示
+- ダークモード
 
 ## 使用技術
 
@@ -26,6 +27,7 @@ Next.js/Reactを用いたBlueskyクライアントになります
 | Typescript            | 5.2.2      |
 | Next.js               | 14.0.2     |
 | NextAuth.js           | 5.0.0      |
+| next-themes           | 0.3.0      |
 | React                 | 18.2.0     |
 | @atproto/api          | 0.12.2     |
 | Tailwind CSS          | 3.3.3      |

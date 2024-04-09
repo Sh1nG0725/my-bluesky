@@ -1,6 +1,7 @@
 import SideNav from '@/app/ui/dashboard/sidenav';
 import { faDove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ThemeSwitch } from '../ui/themeSwitch';
 
 /**
  * ダッシュボードのレイアウト
@@ -14,8 +15,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <SideNav />
       </div>
       <div className="flex-grow p-6 md:overflow-y-auto md:px-12">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center relative ">
           <div><FontAwesomeIcon icon={faDove} className="text-blue-600 h-[30px]"/></div>
+          <div className="absolute right-0"><ThemeSwitch/></div>
         </div>
         <div>{children}</div>
       </div>

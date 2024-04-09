@@ -176,7 +176,8 @@ export async function fetchLatestPosts() {
     // 認証
     const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
     // 自分のポストを取得
-    const tl = await agent.getAuthorFeed({ actor : session?.user.id || "", limit : 5 });
+    console.log(agent.session?.email)
+    const tl = await agent.getAuthorFeed({ actor: agent.session?.did || "", limit : 5 });
     
     const latestPosts = [];
     for (const [key, value] of Object.entries(tl.data.feed)) {
@@ -256,7 +257,7 @@ export async function fetchLikePosts(page: number = 0) {
       // 認証
       const agent = await login(session?.user?.email || "", session?.user?.app_password || "");
       // いいねしたポストを取得
-      const tl = await agent.getActorLikes({ actor : session?.user.id || "", limit : 100 });
+      const tl = await agent.getActorLikes({ actor : agent.session?.did || "", limit : 100 });
       likesFeed = tl.data.feed.concat();
       console.log(`likesFeed:${likesFeed.length}`);
     }
@@ -302,11 +303,11 @@ export async function fetchSearchUsers(page: number = 0, query: string = "") {
       if (query) {
         const res = await agent.searchActors({ limit : 100, q : query });
         searchActors = res.data.actors.concat();
-        console.log(searchActors);
+        console.log(`searchActors:${searchActors.length}`);
       } else {
         const res = await agent.getSuggestions({ limit : 100 });
         searchActors = res.data.actors.concat();
-        console.log(searchActors);
+        console.log(`searchActors:${searchActors.length}`);
       }
     }
 

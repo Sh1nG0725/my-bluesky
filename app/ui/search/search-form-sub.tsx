@@ -27,18 +27,16 @@ export default function FormSub({
     if (searchText) {
       params.set('query', searchText);
     }
-    console.log(`${pathname}?${params.toString()}`);
-    // replace(`${pathname}?${params.toString()}`);
     window.location.href = `${pathname}?${params.toString()}`
   }
   return (
     <>
-      <div className="rounded-md bg-gray-50 p-4 md:p-6">
+      <div className="rounded-md bg-gray-50 dark:bg-slate-700 dark:text-white p-4 md:p-6">
         <div className="mb-4">
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 py-[9px] text-sm outline-2 placeholder:text-gray-500 dark:bg-black dark:placeholder:text-white"
                 id="seachText"
                 type="text"
                 name="seachText"

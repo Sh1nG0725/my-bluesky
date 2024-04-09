@@ -1,8 +1,8 @@
 import '@/app/ui/global.css';
 import { notoSansJP } from '@/app/ui/fonts';
 import { Metadata } from 'next';
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { Providers } from './tproviders';
 
 export const metadata: Metadata = {
   title: {
@@ -23,8 +23,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ja">
-      <body className={`${notoSansJP.className} antialiased`}>{children}</body>
+    <html lang="ja" suppressHydrationWarning>
+      <body className={`${notoSansJP.className} antialiased`}>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }

@@ -17,6 +17,9 @@ type Props = {
   fetchFollowingPosts: (page?: number) => Promise<LatestPost[]>;
 };
 
+const sleep = (sec: number) => new Promise(resolve =>
+  setTimeout(resolve, sec * 1000));
+
 /**
  * フォローイングポストの内容
  * @param param0 
@@ -34,6 +37,7 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
 
   const loadMore = useCallback(
     async (page: number) => {
+      await sleep(0.5);
       const data = await fetchFollowingPosts(page);
       setItems((prev) => [...prev, data]);
       const count = data.length;
@@ -73,13 +77,13 @@ export function Posts({initialItems, fetchFollowingPosts} : Props) {
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <div className="flex mb-4 items-center">
-        <UserPlusIcon className="w-6 text-gray-700" />
-        <h1 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+        <UserPlusIcon className="w-6 text-gray-700 dark:text-white" />
+        <h1 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700 dark:text-white`}>
         Following Posts
         </h1>
       </div>
-      <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        <div className="bg-white px-6">
+      <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 dark:bg-slate-700 dark:text-white p-4">
+        <div className="bg-white dark:bg-black px-6">
           {flatItems.map((post, i) => {
             return (
               <div key={i}

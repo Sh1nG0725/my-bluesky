@@ -31,9 +31,7 @@ export function Posts({initialItems, fetchSearchPosts} : Props) {
       await sleep(0.5);
       const data = await fetchSearchPosts(page);
       setItems((prev) => [...prev, data]);
-
       const count = data.length;
-      console.log(`count:${count}`);
       setHasMore(count > 0);
     },
     [fetchSearchPosts]
@@ -70,14 +68,14 @@ export function Posts({initialItems, fetchSearchPosts} : Props) {
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <div className="flex mb-4 items-center">
-        <UserIcon className="w-6 text-gray-700" />
-        <h2 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+        <UserIcon className="w-6 text-gray-700 dark:text-white" />
+        <h2 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700 dark:text-white`}>
           Users
         </h2>
       </div>
       {flatItems.length !== 0 ?
-      <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        <div className="bg-white px-6">
+      <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 dark:bg-slate-700 dark:text-white p-4">
+        <div className="bg-white dark:bg-black px-6">
           {flatItems.map((post, i) => {
             return (
               <div key={i}

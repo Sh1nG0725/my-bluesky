@@ -29,10 +29,8 @@ export const { auth, signIn, signOut } = NextAuth({
             displayName: data.displayName,
             handle: "@" + data.handle,
           } as User;
-          //console.log(user);
           return user;
         }
-
         console.log('Invalid credentials');
         return null;
       },

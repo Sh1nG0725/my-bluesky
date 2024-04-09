@@ -13,8 +13,8 @@ export const Contents: FC = () => {
   return (
     <>
       <div className="flex mb-4 items-center">
-        <PresentationChartBarIcon className="w-6 text-gray-700" />
-        <h1 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+        <PresentationChartBarIcon className="w-6 text-gray-700 dark:text-white" />
+        <h1 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700 dark:text-white`}>
         Dashboard
         </h1>
       </div>

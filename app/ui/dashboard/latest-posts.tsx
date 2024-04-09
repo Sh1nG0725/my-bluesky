@@ -16,13 +16,13 @@ export default async function LatestPosts() {
   return (
     <div className="flex w-full flex-col md:col-span-4">
       <div className="flex mb-4 items-center">
-        <ClockIcon className="w-6 text-gray-700" />
-        <h2 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700`}>
+        <ClockIcon className="w-6 text-gray-700 dark:text-white" />
+        <h2 className={`${notoSansJP.className} ml-2 text-xl md:text-2xl text-gray-700 dark:text-white`}>
         Latest Your 5 Posts
         </h2>
       </div>
-      <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 p-4">
-        <div className="bg-white px-6">
+      <div className="flex grow flex-col justify-between rounded-xl bg-gray-50 dark:bg-slate-700 dark:text-white p-4">
+        <div className="bg-white dark:bg-black px-6">
           {latestPosts.map((post, i) => {
             return (
               <div key={i}
